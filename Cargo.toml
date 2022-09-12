@@ -11,6 +11,7 @@ edition = "2018"
 
 
 [profile.release]
+strip = true
 lto = true
 
 
