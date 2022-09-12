@@ -3,7 +3,7 @@ use std::env;
 use autojump::data;
 use autojump::Config;
 
-pub fn print_stat(config: &Config) {
+pub fn print_stat(config: &Config, with_weight: bool) {
     let cwd: Option<_> = match env::current_dir() {
         Ok(dir) => Some(dir),
         // The cwd is gone or inaccessible, disable weight reporting later.
@@ -18,6 +18,14 @@ pub fn print_stat(config: &Config) {
     };
     let mut weight_sum = 0.0f64;
     for ref entry in &entries {
+        if !with_weight {
+            println!(
+                "{}",
+                entry.path.clone().into_os_string().into_string().unwrap()
+            );
+            continue;
+        }
+
         println!("{}", entry);
         // NOTE: This isn't exactly accurate due to floating-point nature,
         // but since this is only an estimate let's get over it!
@@ -30,6 +38,9 @@ pub fn print_stat(config: &Config) {
                 cwd_weight = Some(entry.weight);
             }
         }
+    }
+    if !with_weight {
+        return;
     }
 
     println!("⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯\n");

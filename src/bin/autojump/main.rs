@@ -16,6 +16,7 @@ struct Args {
     flag_increase: Option<Option<isize>>,
     flag_decrease: Option<Option<isize>>,
     flag_stat: bool,
+    flag_list: bool,
 }
 
 #[cfg(not(windows))]
@@ -83,6 +84,12 @@ pub fn main() {
                     .min_values(0)
                     .help("decrease current directory weight, default 15"),
             )
+            .arg(
+                Arg::new("list")
+                    .short('l')
+                    .long("list")
+                    .help("query list of jumplist"),
+            )
             .get_matches();
 
         let flag_increase = if app.is_present("increase") {
@@ -108,6 +115,7 @@ pub fn main() {
             flag_increase,
             flag_decrease,
             flag_stat: app.is_present("stat"),
+            flag_list: app.is_present("list"),
         }
     };
     let config = Config::defaults();
@@ -136,7 +144,11 @@ pub fn main() {
         return;
     }
     if args.flag_stat {
-        stat::print_stat(&config);
+        stat::print_stat(&config, true);
+        return;
+    }
+    if args.flag_list {
+        stat::print_stat(&config, false);
         return;
     }
 
